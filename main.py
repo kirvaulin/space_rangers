@@ -7,7 +7,7 @@ from os import path
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), 'snd')
 
-WIDTH = 480
+WIDTH = 700
 HEIGHT = 600
 FPS = 60
 POWERUP_TIME = 2000
@@ -22,14 +22,16 @@ font_name = pygame.font.match_font('arial')
 
 
 def draw_lives(surf, x, y, lives, img):
+    """задаем количество жизней в правом верхнем углу"""
     for i in range(lives):
         img_rect = img.get_rect()
-        img_rect.x = x + 30 * i
+        img_rect.x = x + 35 * i
         img_rect.y = y
         surf.blit(img, img_rect)
 
 
 def draw_text(surf, text, size, x, y):
+    """задаем параметры текста на стартовом экране"""
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, pygame.Color('white'))
     text_rect = text_surface.get_rect()
@@ -38,12 +40,14 @@ def draw_text(surf, text, size, x, y):
 
 
 def newenemy():
+    """задаем противника"""
     zlo = Enemy()
     all_sprites.add(zlo)
     mobs.add(zlo)
 
 
 def show_go_screen():
+    """вывод стартового экрана"""
     screen.blit(background, background_rect)
     draw_text(screen, "Космические рейнджеры", 44, WIDTH / 2, HEIGHT / 4)
     draw_text(screen, "Стрелочки для движения, пробел для стрельбы", 18,
@@ -51,8 +55,10 @@ def show_go_screen():
     draw_text(screen, "Для продолжения нажмите любую кнопку", 18,
               WIDTH / 2, HEIGHT * 3 / 4)
     pygame.display.flip()
+    """флаг выхода из цикла игры"""
     waiting = True
     while waiting:
+        """Отслеживание события: закрыть окно"""
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -62,6 +68,7 @@ def show_go_screen():
 
 
 def draw_health_bar(surf, x, y, picture):
+    """рисуем полоску ХП"""
     if picture < 0:
         picture = 0
     bar_lenght = 100
@@ -74,7 +81,9 @@ def draw_health_bar(surf, x, y, picture):
 
 
 class Starship(pygame.sprite.Sprite):
+    """задаем все параметры корабля игрока"""
     def __init__(self):
+        """инициализируем характеристики"""
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((50, 40))
         self.image = pygame.transform.scale(ship_img, (50, 38))
@@ -94,6 +103,7 @@ class Starship(pygame.sprite.Sprite):
         self.power_time = pygame.time.get_ticks()
 
     def update(self):
+        """метод управления поведением спрайта"""
         if self.power >= 2 and \
                 (pygame.time.get_ticks() - self.power_time > POWERUP_TIME):
             self.power -= 1
@@ -119,10 +129,12 @@ class Starship(pygame.sprite.Sprite):
             self.rect.left = 0
 
     def powerup(self):
+        """двойной выстрел"""
         self.power += 1
         self.power_time = pygame.time.get_ticks()
 
     def shoot(self):
+        """Метод выстрела и все его параметры"""
         moment = pygame.time.get_ticks()
         if moment - self.last_shot > self.shoot_delay:
             self.last_shot = moment
@@ -141,13 +153,20 @@ class Starship(pygame.sprite.Sprite):
                 shoot_sound.play()
 
     def hide(self):
+        """честно не помню для чего это)))"""
         self.hidden = True
         self.hide_timer = pygame.time.get_ticks()
         self.rect.center = (WIDTH / 2, HEIGHT + 200)
 
 
 class Enemy(pygame.sprite.Sprite):
+    """класс врага - летающие тарелки"""
     def __init__(self):
+        """инициализируем характеристики
+        размер тарелки
+        место появления
+        скорость по координатам
+        """
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((30, 50))
         self.image = pygame.transform.scale(enemy_img, (50, 50))
@@ -160,6 +179,7 @@ class Enemy(pygame.sprite.Sprite):
         self.speedX = random.randrange(-3, 3)
 
     def update(self):
+        """метод управления поведением спрайта"""
         self.rect.y += self.speedY
         self.rect.x += self.speedX
         if self.rect.top > HEIGHT + 10 or \
@@ -170,7 +190,13 @@ class Enemy(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
+    """задаем класс лазерного выстрела
+    картинку подгружаем
+    размер
+    скорость отрицательая т.к. на верх идет
+    """
     def __init__(self, x, y):
+        """инициализируем характеристики"""
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((10, 20))
         self.image = bullet_img
@@ -181,13 +207,20 @@ class Bullet(pygame.sprite.Sprite):
         self.speedY = -8
 
     def update(self):
+        """метод управления поведением спрайта
+        при столкновении исчезает"""
         self.rect.y += self.speedY
         if self.rect.bottom < 0:
             self.kill()
 
 
 class Explosion(pygame.sprite.Sprite):
+    """класс взрыва """
     def __init__(self, center, size):
+        """инициализируем характеристики
+        задаются анимация
+        положение
+        """
         pygame.sprite.Sprite.__init__(self)
         self.size = size
         self.image = explosion_anim[self.size][0]
@@ -198,6 +231,10 @@ class Explosion(pygame.sprite.Sprite):
         self.frame_rate = 50
 
     def update(self):
+        """метод управления поведением спрайта
+            вызывает взрыв при попадании в корабль
+            при попадании в тарелку
+            при крушении звездолета"""
         moment = pygame.time.get_ticks()
         if moment - self.last_update > self.frame_rate:
             self.last_update = moment
@@ -212,7 +249,12 @@ class Explosion(pygame.sprite.Sprite):
 
 
 class Upgrade(pygame.sprite.Sprite):
+    """класс получения плюшек
+    щит - принимает на себя одно попадание
+    удвоенный выстред"""
     def __init__(self, center):
+        """задаем положение и скорость бонуса
+        картинки прогружаем"""
         pygame.sprite.Sprite.__init__(self)
         self.type = random.choice(['shield', 'gun'])
         self.image = powerup_images[self.type]
@@ -222,6 +264,8 @@ class Upgrade(pygame.sprite.Sprite):
         self.speedy = 2
 
     def update(self):
+        """при попадании бонуса в нас
+        он исчезает"""
         self.rect.y += self.speedy
         if self.rect.top > HEIGHT:
             self.kill()
