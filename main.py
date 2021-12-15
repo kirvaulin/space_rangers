@@ -9,7 +9,7 @@ snd_dir = path.join(path.dirname(__file__), 'snd')
 
 WIDTH = 700
 HEIGHT = 600
-FPS = 60
+FPS = 66
 POWERUP_TIME = 2000
 
 pygame.init()
