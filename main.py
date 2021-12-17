@@ -22,7 +22,10 @@ font_name = pygame.font.match_font('arial')
 
 
 def draw_lives(surf, x, y, lives, img):
-    """задаем количество жизней в правом верхнем углу"""
+    """задаем количество жизней в правом верхнем углу
+    функция принимает координаты, колличество жизней
+    и картинку для отображения
+    """
     for i in range(lives):
         img_rect = img.get_rect()
         img_rect.x = x + 35 * i
@@ -31,7 +34,8 @@ def draw_lives(surf, x, y, lives, img):
 
 
 def draw_text(surf, text, size, x, y):
-    """задаем параметры текста на стартовом экране"""
+    """задаем параметры текста на стартовом экране
+    размер, координаты"""
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, pygame.Color('white'))
     text_rect = text_surface.get_rect()
@@ -68,7 +72,9 @@ def show_go_screen():
 
 
 def draw_health_bar(surf, x, y, picture):
-    """рисуем полоску ХП"""
+    """рисуем полоску ХП
+    координаты, подгружаем картинку
+    """
     if picture < 0:
         picture = 0
     bar_lenght = 100
@@ -153,7 +159,7 @@ class Starship(pygame.sprite.Sprite):
                 shoot_sound.play()
 
     def hide(self):
-        """честно не помню для чего это)))"""
+        """"""
         self.hidden = True
         self.hide_timer = pygame.time.get_ticks()
         self.rect.center = (WIDTH / 2, HEIGHT + 200)
@@ -166,6 +172,9 @@ class Enemy(pygame.sprite.Sprite):
         размер тарелки
         место появления
         скорость по координатам
+        цвет
+        координаты появления
+        радиус
         """
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((30, 50))
@@ -196,7 +205,12 @@ class Bullet(pygame.sprite.Sprite):
     скорость отрицательая т.к. на верх идет
     """
     def __init__(self, x, y):
-        """инициализируем характеристики"""
+        """инициализируем характеристики
+        размер
+        подгружаем картинку
+        место вылета пули
+        скорость полета
+        """
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((10, 20))
         self.image = bullet_img
@@ -220,6 +234,8 @@ class Explosion(pygame.sprite.Sprite):
         """инициализируем характеристики
         задаются анимация
         положение
+        размер
+        рамку
         """
         pygame.sprite.Sprite.__init__(self)
         self.size = size
@@ -254,7 +270,9 @@ class Upgrade(pygame.sprite.Sprite):
     удвоенный выстред"""
     def __init__(self, center):
         """задаем положение и скорость бонуса
-        картинки прогружаем"""
+        картинки прогружаем
+        тип бонуса выбирается
+        """
         pygame.sprite.Sprite.__init__(self)
         self.type = random.choice(['shield', 'gun'])
         self.image = powerup_images[self.type]
