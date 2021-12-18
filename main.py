@@ -24,7 +24,7 @@ font_name = pygame.font.match_font('arial')
 def draw_lives(surf, x, y, lives, img):
     """задаем количество жизней в правом верхнем углу
     :param surf:
-    :param x: координата по оси ох
+    :param x: координата по оси оx
     :param y: координата по оси оy
     :param lives: количество жизней
     :param img: изображение"""
