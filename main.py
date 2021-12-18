@@ -23,9 +23,11 @@ font_name = pygame.font.match_font('arial')
 
 def draw_lives(surf, x, y, lives, img):
     """задаем количество жизней в правом верхнем углу
-    функция принимает координаты, колличество жизней
-    и картинку для отображения
-    """
+    :param surf:
+    :param x: координата по оси ох
+    :param y: координата по оси оy
+    :param lives: количество жизней
+    :param img: изображение"""
     for i in range(lives):
         img_rect = img.get_rect()
         img_rect.x = x + 35 * i
@@ -35,7 +37,11 @@ def draw_lives(surf, x, y, lives, img):
 
 def draw_text(surf, text, size, x, y):
     """задаем параметры текста на стартовом экране
-    размер, координаты"""
+    :param surf:
+    :param text: текст
+    :param size: размер текста
+    :param x: координата по оси ох
+    :param y: координата по оси оy"""
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, pygame.Color('white'))
     text_rect = text_surface.get_rect()
@@ -73,23 +79,33 @@ def show_go_screen():
 
 def draw_health_bar(surf, x, y, picture):
     """рисуем полоску ХП
-    координаты, подгружаем картинку
-    """
+    :param surf: путь
+    :param x: координата по оси ох
+    :param y: координата по оси оу
+    :param picture: картинка"""
     if picture < 0:
         picture = 0
-    bar_lenght = 100
+    bar_length = 100
     bar_height = 10
-    fill = (picture / 100) * bar_lenght
-    empty_bar = pygame.Rect(x, y, bar_lenght, bar_height)
+    fill = (picture / 100) * bar_length
+    empty_bar = pygame.Rect(x, y, bar_length, bar_height)
     full_bar = pygame.Rect(x, y, fill, bar_height)
     pygame.draw.rect(surf, pygame.Color('green'), full_bar)
     pygame.draw.rect(surf, pygame.Color('white'), empty_bar, 2)
 
 
 class Starship(pygame.sprite.Sprite):
-    """задаем все параметры корабля игрока"""
+    """класс отвечающий за корабль игрока
+    :param pygame.sprite.Sprite: объект типа Sprite
+    :param self.image: переменная изображения объекта
+    :param self.rect: переменная размера изображения
+    :param self.radius: переменная радиуса объекта
+    :param self.speedX: переменная скорости по Х
+    :param self.health: переменная здоровья
+    :param self.shoot_delay: переменная выстрела
+    :param self.lives: перемеенная жизней
+    :param self.power: перемення мощности оружия"""
     def __init__(self):
-        """инициализируем характеристики"""
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((50, 40))
         self.image = pygame.transform.scale(ship_img, (50, 38))
@@ -166,16 +182,17 @@ class Starship(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    """класс врага - летающие тарелки"""
+    """класс врага - летающие тарелки
+    :param pygame.sprite.Sprite: объект типа Sprite
+    :param self.image: переменная объекта изображения
+    :param self.rect: переменная размера изображения
+    :param self.radius: переменная радиуса объекта
+    :param self.speedX: переменная скорости по Х
+    :param rect.x: переменая появления объекта по х
+    :param rect.y: переменая появления объекта по у
+    :param self.speedY: переменная скорости по Y
+    :param self.speedX: переменная скорости по Х"""
     def __init__(self):
-        """инициализируем характеристики
-        размер тарелки
-        место появления
-        скорость по координатам
-        цвет
-        координаты появления
-        радиус
-        """
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((30, 50))
         self.image = pygame.transform.scale(enemy_img, (50, 50))
@@ -200,17 +217,13 @@ class Enemy(pygame.sprite.Sprite):
 
 class Bullet(pygame.sprite.Sprite):
     """задаем класс лазерного выстрела
-    картинку подгружаем
-    размер
-    скорость отрицательая т.к. на верх идет
-    """
+    :param pygame.sprite.Sprite: объект типа Sprite
+    :param x: координата по х
+    :param y: координата по у
+    :param self.image: переменная объекта изображения
+    :param self.rect: переменная размера изображения
+    :param self.speedY: переменная скорости по Y"""
     def __init__(self, x, y):
-        """инициализируем характеристики
-        размер
-        подгружаем картинку
-        место вылета пули
-        скорость полета
-        """
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((10, 20))
         self.image = bullet_img
@@ -229,7 +242,12 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Explosion(pygame.sprite.Sprite):
-    """класс взрыва """
+    """класс взрыва
+    :param pygame.sprite.Sprite: объект типа Sprite
+    :param self.size: размер взрыва
+    :param self.image: переменная объекта изображения
+    :param self.rect: переменная размера изображения
+    :param self.frame: переменная размера рамки"""
     def __init__(self, center, size):
         """инициализируем характеристики
         задаются анимация
@@ -265,14 +283,14 @@ class Explosion(pygame.sprite.Sprite):
 
 
 class Upgrade(pygame.sprite.Sprite):
-    """класс получения плюшек
-    щит - принимает на себя одно попадание
-    удвоенный выстред"""
+    """класс получения плюшек щит - принимает на себя одно попадание, удвоенный выстрел
+    :param pygame.sprite.Sprite: объект типа Sprite
+    :param center: центральная координата
+    :param self.type: случайный выбор типа бонуса
+    :param self.image: переменная объекта изображения
+    :param self.rect: переменная размера изображения
+    :param self.speedy: скорость опускания по у"""
     def __init__(self, center):
-        """задаем положение и скорость бонуса
-        картинки прогружаем
-        тип бонуса выбирается
-        """
         pygame.sprite.Sprite.__init__(self)
         self.type = random.choice(['shield', 'gun'])
         self.image = powerup_images[self.type]
